@@ -1,10 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>Simple Page</title>
+    <title>زر الرسالة مع منظر واقعي</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 100px;
+            /* خلفية منظر واقعي */
+            background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            color: white;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+            background-color: rgba(76, 175, 80, 0.8);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: rgba(69, 160, 73, 0.9);
+        }
+        .message {
+            display: none;
+            font-size: 28px;
+            color: #ffeb3b;
+            margin-top: 50px;
+            text-shadow: 2px 2px 5px black;
+        }
+    </style>
 </head>
 <body>
-    <p>hi</p>
+
+    <button onclick="showMessage()">اضغط هنا</button>
+
+    <div class="message" id="msg">
+        تأخر الوقت، روح نام
+    </div>
+
+    <script>
+        function showMessage() {
+            document.getElementById('msg').style.display = 'block';
+        }
+    </script>
+
 </body>
 </html>
