@@ -1,129 +1,61 @@
-const TelegramBot = require('node-telegram-bot-api');
-const axios = require('axios');
-const fs = require('fs');
-const schedule = require('node-schedule');
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>بوت حقيبة المستخدم</title>
+<style>
+body { font-family: Arial; margin: 20px; }
+textarea { width: 100%; height: 100px; }
+button { margin-top: 10px; padding: 10px 20px; }
+#log { border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: scroll; margin-top: 10px; }
+</style>
+</head>
+<body>
 
-// 🔑 التوكن الخاص بك
+<h2>بوت حقيبة المستخدم (واجهة ويب)</h2>
+
+<label>أدخل معرف المستخدم أو القناة:</label>
+<input type="text" id="chatId" placeholder="مثال: 123456789"><br>
+
+<label>أدخل الرسالة:</label>
+<textarea id="message"></textarea><br>
+
+<button onclick="sendMessage()">إرسال الرسالة</button>
+
+<div id="log"></div>
+
+<script>
+// 🔑 ضع توكن البوت هنا
 const token = "8118999111:AAGRKUMxreudNBbq_QDt1UszwG27cqhuSTY";
-const bot = new TelegramBot(token, { polling: true });
 
-let userTasks = {};
+function log(text) {
+    const logDiv = document.getElementById("log");
+    logDiv.innerHTML += text + "<br>";
+    logDiv.scrollTop = logDiv.scrollHeight;
+}
 
-bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(msg.chat.id, `
-📦 *بوت حقيبة المستخدم*
+function sendMessage() {
+    const chatId = document.getElementById("chatId").value;
+    const text = document.getElementById("message").value;
 
-اختر القسم:
-/media - تحميل من الميديا
-/ai - ذكاء اصطناعي
-/files - إدارة الملفات
-/tasks - التذكير والمهام
-/services - خدمات سريعة
-`, { parse_mode: "Markdown" });
-});
-
-
-// =========================
-// 📥 قسم تحميل الميديا
-// =========================
-
-bot.onText(/\/media (.+)/, async (msg, match) => {
-    const url = match[1];
-    bot.sendMessage(msg.chat.id, "⏳ جاري التحميل...");
-
-    try {
-        // مثال API (ضع API حقيقي)
-        const response = await axios.get(`https://api.example.com/download?url=${url}`);
-        bot.sendMessage(msg.chat.id, `✅ رابط التحميل:\n${response.data.download}`);
-    } catch (err) {
-        bot.sendMessage(msg.chat.id, "❌ فشل التحميل");
+    if (!chatId || !text) {
+        alert("أدخل كل القيم!");
+        return;
     }
-});
 
+    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId, text: text })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.ok) log(`✅ تم إرسال الرسالة: "${text}"`);
+        else log(`❌ خطأ: ${JSON.stringify(data)}`);
+    })
+    .catch(err => log("❌ حدث خطأ: " + err));
+}
+</script>
 
-// =========================
-// 🤖 قسم الذكاء الاصطناعي
-// =========================
-
-bot.onText(/\/ai (.+)/, async (msg, match) => {
-    const prompt = match[1];
-
-    try {
-        // ضع API ذكاء اصطناعي حقيقي
-        const response = await axios.post("https://api.example.com/ai", {
-            prompt: prompt
-        });
-
-        bot.sendMessage(msg.chat.id, `🤖 الرد:\n${response.data.reply}`);
-    } catch (err) {
-        bot.sendMessage(msg.chat.id, "❌ خطأ في الذكاء الاصطناعي");
-    }
-});
-
-
-// =========================
-// 📂 قسم الملفات
-// =========================
-
-bot.onText(/\/files/, (msg) => {
-    bot.sendMessage(msg.chat.id, "📂 أرسل أي ملف لحفظه في السيرفر");
-});
-
-bot.on("document", async (msg) => {
-    const fileId = msg.document.file_id;
-    const file = await bot.getFile(fileId);
-    const fileUrl = `https://api.telegram.org/file/bot${token}/${file.file_path}`;
-
-    const response = await axios({
-        method: "GET",
-        url: fileUrl,
-        responseType: "stream"
-    });
-
-    response.data.pipe(fs.createWriteStream(`./${msg.document.file_name}`));
-    bot.sendMessage(msg.chat.id, "✅ تم حفظ الملف");
-});
-
-
-// =========================
-// ⏰ قسم التذكير والمهام
-// =========================
-
-bot.onText(/\/tasks/, (msg) => {
-    bot.sendMessage(msg.chat.id, "اكتب:\n/addtask المهمة | بعد كم دقيقة");
-});
-
-bot.onText(/\/addtask (.+)/, (msg, match) => {
-    const parts = match[1].split("|");
-    const task = parts[0].trim();
-    const minutes = parseInt(parts[1]);
-
-    const time = new Date(Date.now() + minutes * 60000);
-
-    schedule.scheduleJob(time, function(){
-        bot.sendMessage(msg.chat.id, `⏰ تذكير:\n${task}`);
-    });
-
-    bot.sendMessage(msg.chat.id, "✅ تم إضافة التذكير");
-});
-
-
-// =========================
-// ⚡ قسم الخدمات السريعة
-// =========================
-
-bot.onText(/\/services/, (msg) => {
-    bot.sendMessage(msg.chat.id, `
-⚡ خدمات سريعة:
-/time - الوقت الحالي
-/id - معرفة ID
-`);
-});
-
-bot.onText(/\/time/, (msg) => {
-    bot.sendMessage(msg.chat.id, `🕒 الوقت الآن:\n${new Date().toLocaleString()}`);
-});
-
-bot.onText(/\/id/, (msg) => {
-    bot.sendMessage(msg.chat.id, `🆔 ID الخاص بك:\n${msg.from.id}`);
-});
+</body>
+</html>
