@@ -1,56 +1,235 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <title>زر الرسالة مع منظر واقعي</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 100px;
-            /* خلفية منظر واقعي */
-            background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1950&q=80');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            height: 100vh;
-            color: white;
-        }
-        button {
-            padding: 15px 30px;
-            font-size: 20px;
-            cursor: pointer;
-            background-color: rgba(76, 175, 80, 0.8);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
-        button:hover {
-            background-color: rgba(69, 160, 73, 0.9);
-        }
-        .message {
-            display: none;
-            font-size: 28px;
-            color: #ffeb3b;
-            margin-top: 50px;
-            text-shadow: 2px 2px 5px black;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>River Store</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#1e1e24;
+    color:white;
+}
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 20px;
+    background:#2a2a35;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+    color:#a855f7;
+}
+
+button{
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+    background:#facc15;
+    color:black;
+    box-shadow:0 0 10px #facc15;
+    transition:0.3s;
+}
+
+button:hover{
+    box-shadow:0 0 20px #facc15, 0 0 40px #a855f7;
+    transform:scale(1.05);
+}
+
+.section{
+    padding:20px;
+}
+
+.products{
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.card{
+    width:200px;
+    background:#2a2a35;
+    border-radius:12px;
+    overflow:hidden;
+    transition:0.3s;
+    box-shadow:0 0 10px #a855f7;
+}
+
+.card:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 25px #facc15;
+}
+
+.card img{
+    width:100%;
+    height:130px;
+    object-fit:cover;
+}
+
+.card .info{
+    padding:10px;
+}
+
+.price{
+    color:#facc15;
+    font-weight:bold;
+}
+
+.hidden{
+    display:none;
+}
+
+input{
+    padding:10px;
+    margin:10px 0;
+    width:250px;
+    border-radius:8px;
+    border:none;
+}
+
+.center{
+    text-align:center;
+    margin-top:50px;
+}
+</style>
 </head>
+
 <body>
 
-    <button onclick="showMessage()">اضغط هنا</button>
+<header>
+<div class="logo">River</div>
+<div id="userArea">
+<button onclick="showLogin()">تسجيل دخول</button>
+</div>
+</header>
 
-    <div class="message" id="msg">
-        تأخر الوقت، روح نام
-    </div>
+<!-- تسجيل الدخول -->
+<div id="loginPage" class="center">
+<h2>تسجيل الدخول</h2>
+<input type="text" id="username" placeholder="اسم المستخدم"><br>
+<input type="password" id="password" placeholder="كلمة المرور"><br>
+<button onclick="login()">دخول</button>
+</div>
 
-    <script>
-        function showMessage() {
-            document.getElementById('msg').style.display = 'block';
-        }
-    </script>
+<!-- المتجر -->
+<div id="storePage" class="hidden">
+
+<div class="section">
+<h2>الأكثر شهرة</h2>
+<div class="products">
+
+<div class="card">
+<img src="https://via.placeholder.com/300x200?text=PUBG">
+<div class="info">
+<div>شحن شدات ببجي</div>
+<div class="price">$10</div>
+<button onclick="addToCart('شدات ببجي',10)">إضافة للسلة</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://via.placeholder.com/300x200?text=Fortnite">
+<div class="info">
+<div>شحن فورتنايت</div>
+<div class="price">$15</div>
+<button onclick="addToCart('فورتنايت',15)">إضافة للسلة</button>
+</div>
+</div>
+
+<div class="card">
+<img src="https://via.placeholder.com/300x200?text=Apple+Card">
+<div class="info">
+<div>بطاقة Apple Store</div>
+<div class="price">$25</div>
+<button onclick="addToCart('Apple Card',25)">إضافة للسلة</button>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="section">
+<h2>سلة المشتريات</h2>
+<div id="cartItems"></div>
+<h3 id="total"></h3>
+<button onclick="checkout()">الدفع الإلكتروني</button>
+</div>
+
+</div>
+
+<!-- لوحة التحكم -->
+<div id="dashboard" class="hidden center">
+<h2>لوحة التحكم</h2>
+<p>مرحباً <span id="userDisplay"></span></p>
+<button onclick="goStore()">دخول المتجر</button>
+<button onclick="logout()">تسجيل خروج</button>
+</div>
+
+<script>
+let cart = [];
+let total = 0;
+
+function showLogin(){
+    document.getElementById("loginPage").classList.remove("hidden");
+}
+
+function login(){
+    let user = document.getElementById("username").value;
+    let pass = document.getElementById("password").value;
+
+    if(user && pass){
+        document.getElementById("loginPage").classList.add("hidden");
+        document.getElementById("dashboard").classList.remove("hidden");
+        document.getElementById("userDisplay").innerText = user;
+        document.getElementById("userArea").innerHTML = "<button onclick='logout()'>خروج</button>";
+    } else {
+        alert("أدخل البيانات");
+    }
+}
+
+function goStore(){
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("storePage").classList.remove("hidden");
+}
+
+function logout(){
+    location.reload();
+}
+
+function addToCart(name, price){
+    cart.push({name, price});
+    total += price;
+    renderCart();
+}
+
+function renderCart(){
+    let items = "";
+    cart.forEach(item=>{
+        items += "<div>"+item.name+" - $"+item.price+"</div>";
+    });
+    document.getElementById("cartItems").innerHTML = items;
+    document.getElementById("total").innerText = "المجموع: $" + total;
+}
+
+function checkout(){
+    if(total > 0){
+        alert("تمت عملية الدفع بنجاح ✅");
+        cart = [];
+        total = 0;
+        renderCart();
+    } else {
+        alert("السلة فارغة");
+    }
+}
+</script>
 
 </body>
 </html>
