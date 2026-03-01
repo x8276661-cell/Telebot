@@ -7,227 +7,275 @@
 
 <style>
 body{
-    margin:0;
-    font-family:Arial;
-    background:#1e1e24;
-    color:white;
+margin:0;
+font-family:Arial;
+background:#1f1f28;
+color:white;
+overflow-x:hidden;
 }
 
 header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:15px 20px;
-    background:#2a2a35;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px;
+background:#2b2b38;
 }
 
 .logo{
-    font-size:22px;
-    font-weight:bold;
-    color:#a855f7;
+font-size:22px;
+font-weight:bold;
+color:#a855f7;
 }
 
-button{
-    padding:10px 20px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:bold;
-    background:#facc15;
-    color:black;
-    box-shadow:0 0 10px #facc15;
-    transition:0.3s;
+.menu-btn{
+font-size:22px;
+cursor:pointer;
+color:#facc15;
 }
 
-button:hover{
-    box-shadow:0 0 20px #facc15, 0 0 40px #a855f7;
-    transform:scale(1.05);
+.sidebar{
+position:fixed;
+left:-250px;
+top:0;
+width:250px;
+height:100%;
+background:#2b2b38;
+padding:20px;
+transition:0.3s;
+}
+
+.sidebar a{
+display:block;
+margin:15px 0;
+cursor:pointer;
+color:white;
+text-decoration:none;
+}
+
+.sidebar a:hover{
+color:#facc15;
+}
+
+.show{
+left:0;
+}
+
+.banner{
+width:100%;
+height:200px;
+overflow:hidden;
+position:relative;
+}
+
+.banner img{
+width:100%;
+height:200px;
+object-fit:cover;
+position:absolute;
+animation:slide 12s infinite;
+}
+
+@keyframes slide{
+0%{opacity:1}
+33%{opacity:0}
+66%{opacity:0}
+100%{opacity:1}
 }
 
 .section{
-    padding:20px;
+padding:20px;
 }
 
 .products{
-    display:flex;
-    gap:15px;
-    flex-wrap:wrap;
+display:flex;
+gap:15px;
+overflow-x:auto;
 }
 
 .card{
-    width:200px;
-    background:#2a2a35;
-    border-radius:12px;
-    overflow:hidden;
-    transition:0.3s;
-    box-shadow:0 0 10px #a855f7;
+min-width:180px;
+background:#2b2b38;
+border-radius:12px;
+overflow:hidden;
+cursor:pointer;
+box-shadow:0 0 10px #a855f7;
+transition:0.3s;
 }
 
 .card:hover{
-    transform:scale(1.05);
-    box-shadow:0 0 25px #facc15;
+transform:scale(1.05);
+box-shadow:0 0 20px #facc15;
 }
 
 .card img{
-    width:100%;
-    height:130px;
-    object-fit:cover;
+width:100%;
+height:120px;
+object-fit:cover;
 }
 
 .card .info{
-    padding:10px;
+padding:10px;
 }
 
-.price{
-    color:#facc15;
-    font-weight:bold;
+button{
+background:#facc15;
+border:none;
+padding:8px 15px;
+border-radius:8px;
+cursor:pointer;
+box-shadow:0 0 10px #facc15;
 }
 
-.hidden{
-    display:none;
+button:hover{
+box-shadow:0 0 20px #facc15,0 0 30px #a855f7;
 }
 
-input{
-    padding:10px;
-    margin:10px 0;
-    width:250px;
-    border-radius:8px;
-    border:none;
+.hidden{display:none}
+
+.page{
+padding:20px;
 }
 
-.center{
-    text-align:center;
-    margin-top:50px;
-}
 </style>
 </head>
 
 <body>
 
 <header>
+<div class="menu-btn" onclick="toggleSidebar()">☰</div>
 <div class="logo">River</div>
-<div id="userArea">
-<button onclick="showLogin()">تسجيل دخول</button>
-</div>
 </header>
 
-<!-- تسجيل الدخول -->
-<div id="loginPage" class="center">
-<h2>تسجيل الدخول</h2>
-<input type="text" id="username" placeholder="اسم المستخدم"><br>
-<input type="password" id="password" placeholder="كلمة المرور"><br>
-<button onclick="login()">دخول</button>
+<div class="sidebar" id="sidebar">
+<a onclick="showHome()">الرئيسية</a>
+<a onclick="showProfile()">الصفحة الشخصية</a>
+<a onclick="showSettings()">الإعدادات</a>
+<a onclick="showCart()">سلة المشتريات</a>
+<a onclick="logout()">تسجيل الخروج</a>
 </div>
 
-<!-- المتجر -->
-<div id="storePage" class="hidden">
+<!-- الصفحة الرئيسية -->
+<div id="homePage">
+
+<div class="banner">
+<img src="https://via.placeholder.com/1200x200?text=River+Offers">
+</div>
 
 <div class="section">
 <h2>الأكثر شهرة</h2>
 <div class="products">
 
-<div class="card">
+<div class="card" onclick="showProduct('شدات ببجي',10,'https://via.placeholder.com/400x300?text=PUBG')">
 <img src="https://via.placeholder.com/300x200?text=PUBG">
-<div class="info">
-<div>شحن شدات ببجي</div>
-<div class="price">$10</div>
-<button onclick="addToCart('شدات ببجي',10)">إضافة للسلة</button>
-</div>
+<div class="info">شدات ببجي - $10</div>
 </div>
 
-<div class="card">
+<div class="card" onclick="showProduct('فورتنايت',15,'https://via.placeholder.com/400x300?text=Fortnite')">
 <img src="https://via.placeholder.com/300x200?text=Fortnite">
-<div class="info">
-<div>شحن فورتنايت</div>
-<div class="price">$15</div>
-<button onclick="addToCart('فورتنايت',15)">إضافة للسلة</button>
-</div>
+<div class="info">فورتنايت - $15</div>
 </div>
 
-<div class="card">
-<img src="https://via.placeholder.com/300x200?text=Apple+Card">
-<div class="info">
-<div>بطاقة Apple Store</div>
-<div class="price">$25</div>
-<button onclick="addToCart('Apple Card',25)">إضافة للسلة</button>
-</div>
+<div class="card" onclick="showProduct('Apple Store',25,'https://via.placeholder.com/400x300?text=Apple')">
+<img src="https://via.placeholder.com/300x200?text=Apple">
+<div class="info">Apple Card - $25</div>
 </div>
 
 </div>
 </div>
 
-<div class="section">
+</div>
+
+<!-- تفاصيل المنتج -->
+<div id="productPage" class="hidden page">
+<h2 id="productName"></h2>
+<img id="productImg" width="100%">
+<h3 id="productPrice"></h3>
+<button onclick="addToCart()">إضافة للسلة</button>
+<button onclick="showHome()">رجوع</button>
+</div>
+
+<!-- السلة -->
+<div id="cartPage" class="hidden page">
 <h2>سلة المشتريات</h2>
 <div id="cartItems"></div>
 <h3 id="total"></h3>
-<button onclick="checkout()">الدفع الإلكتروني</button>
+<button onclick="checkout()">الدفع</button>
 </div>
 
+<!-- الصفحة الشخصية -->
+<div id="profilePage" class="hidden page">
+<h2>الصفحة الشخصية</h2>
+<p>اسم المستخدم: RiverUser</p>
+<p>عدد الطلبات: 3</p>
 </div>
 
-<!-- لوحة التحكم -->
-<div id="dashboard" class="hidden center">
-<h2>لوحة التحكم</h2>
-<p>مرحباً <span id="userDisplay"></span></p>
-<button onclick="goStore()">دخول المتجر</button>
-<button onclick="logout()">تسجيل خروج</button>
+<!-- الإعدادات -->
+<div id="settingsPage" class="hidden page">
+<h2>الإعدادات</h2>
+<button onclick="alert('تم حفظ التغييرات')">حفظ التغييرات</button>
 </div>
 
 <script>
-let cart = [];
-let total = 0;
+let cart=[];
+let total=0;
+let currentProduct={};
 
-function showLogin(){
-    document.getElementById("loginPage").classList.remove("hidden");
+function toggleSidebar(){
+document.getElementById("sidebar").classList.toggle("show");
 }
 
-function login(){
-    let user = document.getElementById("username").value;
-    let pass = document.getElementById("password").value;
-
-    if(user && pass){
-        document.getElementById("loginPage").classList.add("hidden");
-        document.getElementById("dashboard").classList.remove("hidden");
-        document.getElementById("userDisplay").innerText = user;
-        document.getElementById("userArea").innerHTML = "<button onclick='logout()'>خروج</button>";
-    } else {
-        alert("أدخل البيانات");
-    }
+function hideAll(){
+document.getElementById("homePage").classList.add("hidden");
+document.getElementById("productPage").classList.add("hidden");
+document.getElementById("cartPage").classList.add("hidden");
+document.getElementById("profilePage").classList.add("hidden");
+document.getElementById("settingsPage").classList.add("hidden");
 }
 
-function goStore(){
-    document.getElementById("dashboard").classList.add("hidden");
-    document.getElementById("storePage").classList.remove("hidden");
+function showHome(){hideAll();document.getElementById("homePage").classList.remove("hidden");}
+function showProfile(){hideAll();document.getElementById("profilePage").classList.remove("hidden");}
+function showSettings(){hideAll();document.getElementById("settingsPage").classList.remove("hidden");}
+function showCart(){hideAll();document.getElementById("cartPage").classList.remove("hidden");}
+
+function showProduct(name,price,img){
+currentProduct={name,price};
+hideAll();
+document.getElementById("productPage").classList.remove("hidden");
+document.getElementById("productName").innerText=name;
+document.getElementById("productPrice").innerText="السعر: $"+price;
+document.getElementById("productImg").src=img;
 }
 
-function logout(){
-    location.reload();
-}
-
-function addToCart(name, price){
-    cart.push({name, price});
-    total += price;
-    renderCart();
+function addToCart(){
+cart.push(currentProduct);
+total+=currentProduct.price;
+renderCart();
+alert("تمت الإضافة للسلة");
 }
 
 function renderCart(){
-    let items = "";
-    cart.forEach(item=>{
-        items += "<div>"+item.name+" - $"+item.price+"</div>";
-    });
-    document.getElementById("cartItems").innerHTML = items;
-    document.getElementById("total").innerText = "المجموع: $" + total;
+let items="";
+cart.forEach(item=>{
+items+="<div>"+item.name+" - $"+item.price+"</div>";
+});
+document.getElementById("cartItems").innerHTML=items;
+document.getElementById("total").innerText="المجموع: $"+total;
 }
 
 function checkout(){
-    if(total > 0){
-        alert("تمت عملية الدفع بنجاح ✅");
-        cart = [];
-        total = 0;
-        renderCart();
-    } else {
-        alert("السلة فارغة");
-    }
+if(total>0){
+alert("تم الدفع بنجاح ✅");
+cart=[];
+total=0;
+renderCart();
+}else{
+alert("السلة فارغة");
+}
+}
+
+function logout(){
+location.reload();
 }
 </script>
 
